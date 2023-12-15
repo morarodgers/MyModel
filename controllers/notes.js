@@ -3,26 +3,67 @@ const {StatusCodes} = require('http-status-codes')
 const {BadRequestError, NotFoundError} = require('../errors')
 
 const getAllNotes = async(req, res) => {
-    res.send('get all notes')
+    const notes = await Note.find({ createdBy: req.user.userId }).sort('createdAt')
+    res.status(StatusCodes.OK).json({ notes, count: notes.length })
 }
-
+ 
 const getNote = async(req, res) => {
-    res.send('get one note')
+    const {
+        user: { userId },
+        params: { id: noteId },
+      } = req
+    
+      const note = await Note.findOne({
+        _id: noteId,
+        createdBy: userId,
+      })
+      if (!note) {
+        throw new NotFoundError(`No job with id ${noteId}`)
+      }
+      res.status(StatusCodes.OK).json({ note })
 }
 
 const createNote = async(req, res) => {
-    //res.send('create a job')
     req.body.createdBy = req.user.userId
     const note = await Note.create(req.body)
-    res.status(StatusCodes.CREATED).json({job})
+    res.status(StatusCodes.CREATED).json({note})
 }
 
 const updateNote = async(req, res) => {
-    res.send('update a note')
+    const {
+        body: { title, subject},
+        user: { userId },
+        params: { id: noteId },
+      } = req
+
+      if (title === '' || subject === '') {
+        throw new BadRequestError('Title or subject fields cannot be empty')
+      }
+      const note = await Note.findByIdAndUpdate(
+        { _id: noteId, createdBy: userId },
+        req.body,
+        { new: true, runValidators: true }
+      )
+      if (!note) {
+        throw new NotFoundError(`No note with id ${noteId}`)
+      }
+      res.status(StatusCodes.OK).json({ note })
 }
 
 const deleteNote = async(req, res) => {
-    res.send('delete a note')
+    const {
+        user: { userId },
+        params: { id: noteId },
+      } = req
+
+      const note = await Note.findByIdAndRemove({
+        _id: noteId,
+        createdBy: userId,
+      })
+      if (!note) {
+        throw new NotFoundError(`No note with id ${noteId}`)
+      }
+      res.status(StatusCodes.OK).send()
 }
 
 module.exports = {
