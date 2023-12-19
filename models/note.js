@@ -5,6 +5,10 @@ const NoteSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide a title for the Note']
     },
+    subject: {
+        type: String,
+        required: [true, 'Please enter the subject of your Note']
+    },
     content: {
         type: String,
         required: [true, 'Please enter the contents of your Note']

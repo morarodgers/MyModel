@@ -4,7 +4,7 @@ const {UnauthenticatedError} = require('../errors')
 
 
 const auth = (req, res, next) => {
-    // Check header
+    // Check header 
     const authHeader = req.headers.authorization
     if(!authHeader || !authHeader.startsWith('Bearer ')) {
         throw new UnauthenticatedError('Authentication invalid')

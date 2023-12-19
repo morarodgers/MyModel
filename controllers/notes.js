@@ -4,23 +4,23 @@ const {BadRequestError, NotFoundError} = require('../errors')
 
 const getAllNotes = async(req, res) => {
     const notes = await Note.find({ createdBy: req.user.userId }).sort('createdAt')
-  res.status(StatusCodes.OK).json({ notes, count: notes.length })
+    res.status(StatusCodes.OK).json({ notes, count: notes.length })
 }
-
-const getNote = async (req, res) => {
-  const {
-    user: { userId },
-    params: { id: noteId },
-  } = req
-
-  const note = await Note.findOne({
-    _id: noteId,
-    createdBy: userId,
-  })
-  if (!note) {
-    throw new NotFoundError(`No job with id ${noteId}`)
-  }
-  res.status(StatusCodes.OK).json({ note })
+ 
+const getNote = async(req, res) => {
+    const {
+        user: { userId },
+        params: { id: noteId },
+      } = req
+    
+      const note = await Note.findOne({
+        _id: noteId,
+        createdBy: userId,
+      })
+      if (!note) {
+        throw new NotFoundError(`No job with id ${noteId}`)
+      }
+      res.status(StatusCodes.OK).json({ note })
 }
 
 const createNote = async(req, res) => {
@@ -31,13 +31,13 @@ const createNote = async(req, res) => {
 
 const updateNote = async(req, res) => {
     const {
-        body: { title, content },
+        body: { title, subject},
         user: { userId },
         params: { id: noteId },
       } = req
-    
-      if (title === '' || content === '') {
-        throw new BadRequestError('Title or Content fields cannot be empty')
+
+      if (title === '' || subject === '') {
+        throw new BadRequestError('Title or subject fields cannot be empty')
       }
       const note = await Note.findByIdAndUpdate(
         { _id: noteId, createdBy: userId },
@@ -45,7 +45,7 @@ const updateNote = async(req, res) => {
         { new: true, runValidators: true }
       )
       if (!note) {
-        throw new NotFoundError(`No job with id ${noteId}`)
+        throw new NotFoundError(`No note with id ${noteId}`)
       }
       res.status(StatusCodes.OK).json({ note })
 }
@@ -55,7 +55,7 @@ const deleteNote = async(req, res) => {
         user: { userId },
         params: { id: noteId },
       } = req
-    
+
       const note = await Note.findByIdAndRemove({
         _id: noteId,
         createdBy: userId,
