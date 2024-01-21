@@ -20,7 +20,7 @@ import {
     notesTable = document.getElementById("notes-table");
     notesTableHeader = document.getElementById("notes-table-header");
   
-    notesDiv.addEventListener("click", (e) => {
+    notesDiv.addEventListener("click", async (e) => {
       if (inputEnabled && e.target.nodeName === "BUTTON") {
         if (e.target === addNote) {
           showAddEdit(null);
@@ -35,7 +35,7 @@ import {
             showAddEdit(e.target.dataset.id);
         } else if (e.target.classList.contains("deleteButton")) {
           message.textContent = "";
-          showAddEdit(e.target.dataset.id);
+          await deleteNote(e.target.dataset.id);
       }
       }
     });
@@ -82,7 +82,33 @@ import {
       } catch (err) {
         console.log(err);
         message.textContent = "A communication error occurred.";
-      }
+      } finally {
       enableInput(true);
       setDiv(notesDiv);
+      }
+    };
+
+    const deleteNote = async (noteId) => {
+      try {
+        const response = await fetch(`/api/v1/notes/${noteId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+    
+        const data = await response.json();
+    
+        if (response.status === 200) {
+          message.textContent = "Note deleted successfully.";
+          // Optionally, you can refresh the notes display after deleting a note.
+          await showNotes();
+        } else {
+          message.textContent = data.msg;
+        }
+      } catch (err) {
+        console.log(err);
+        message.textContent = "An error occurred while deleting the note.";
+      }
     };

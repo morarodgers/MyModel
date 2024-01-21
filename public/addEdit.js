@@ -77,7 +77,7 @@ export const handleAddEdit = () => {
         
         showNotes();
 
-      } else if (e.target.classList.contains("deleteButton")) {
+      } /*else if (e.target.classList.contains("deleteButton")) {
         // Get the noteId from the data attribute
         const noteId = e.target.dataset.id;
 
@@ -105,7 +105,7 @@ export const handleAddEdit = () => {
         }
 
         showNotes();
-      }
+      }*/
     }
   });
 };
