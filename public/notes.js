@@ -102,7 +102,6 @@ import {
     
         if (response.status === 200) {
           message.textContent = "Note deleted successfully.";
-          // Optionally, you can refresh the notes display after deleting a note.
           await showNotes();
         } else {
           message.textContent = data.msg;
