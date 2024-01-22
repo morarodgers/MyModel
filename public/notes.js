@@ -8,6 +8,7 @@ import {
   } from "./index.js";
   import { showLoginRegister } from "./loginRegister.js";
   import { showAddEdit } from "./addEdit.js";
+  import { deleteNote } from "./addEdit.js";
   
   let notesDiv = null;
   let notesTable = null;
@@ -85,30 +86,5 @@ import {
       } finally {
       enableInput(true);
       setDiv(notesDiv);
-      }
-    };
-
-    const deleteNote = async (noteId) => {
-      try {
-        const response = await fetch(`/api/v1/notes/${noteId}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-    
-        const data = await response.json();
-    
-        if (response.status === 200) {
-          message.textContent = "Note deleted successfully.";
-          // Optionally, you can refresh the notes display after deleting a note.
-          await showNotes();
-        } else {
-          message.textContent = data.msg;
-        }
-      } catch (err) {
-        console.log(err);
-        message.textContent = "An error occurred while deleting the note.";
       }
     };

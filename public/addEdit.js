@@ -6,17 +6,14 @@ let title = null;
 let content = null;
 let subject = null;
 let addingNote = null;
-let deletingNote = null;
 
 export const handleAddEdit = () => {
- // let addEditDiv, title, subject, content, addingNote, deletingNote, token;
 
   addEditDiv = document.getElementById("edit-note");
   title = document.getElementById("title");
   subject = document.getElementById("subject");
   content = document.getElementById("content");
   addingNote = document.getElementById("adding-note");
-  deletingNote = document.getElementById("deleting-note");
   const editCancel = document.getElementById("edit-cancel");
 
   addEditDiv.addEventListener("click", async (e) => {
@@ -77,35 +74,7 @@ export const handleAddEdit = () => {
         
         showNotes();
 
-      } /*else if (e.target.classList.contains("deleteButton")) {
-        // Get the noteId from the data attribute
-        const noteId = e.target.dataset.id;
-
-        try {
-          const response = await fetch(`/api/v1/notes/${noteId}`, {
-            method: "DELETE",
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (response.status === 204) {
-            console.log('Note deleted successfully');
-            
-            showNotes();
-
-          } else {
-            // Handle error
-            const data = await response.json();
-            console.error('Error deleting Note:', data.msg);
-          }
-        } catch (err) {
-          console.error('A communication error occurred:', err);
-        }
-
-        showNotes();
-      }*/
+      }
     }
   });
 };
@@ -153,5 +122,31 @@ export const showAddEdit = async (noteId) => {
     }
 
     enableInput(true);
+  }
+};
+
+// Deleting a note
+export const deleteNote = async (noteId) => {
+  try {
+    const response = await fetch(`/api/v1/notes/${noteId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.status === 200) {
+      message.textContent = "Note deleted successfully.";
+      // Refresh the notes display after deleting a note.
+      await showNotes();
+    } else {
+      message.textContent = data.msg;
+    }
+  } catch (err) {
+    console.log(err);
+    message.textContent = "An error occurred while deleting the note.";
   }
 };
