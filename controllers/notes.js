@@ -63,7 +63,7 @@ const deleteNote = async(req, res) => {
       if (!note) {
         throw new NotFoundError(`No note with id ${noteId}`)
       }
-      res.status(StatusCodes.OK).send()
+      res.status(StatusCodes.OK).json({ msg: "The note was deleted." });
 }
 
 module.exports = {
